@@ -14,16 +14,22 @@ class SpeakerController(object):
         # Each element in RELAY_PIN_MAP represents the pin (broadcom numbering) which the correspond relay is connected
         #  i.e. RELAY_PIN_MAP[0] is the pin that the relay 0 is mapped to on the raspberry pi
         RELAY_PIN_MAP = [2, 3, 4, 14, 15, 17, 18, 27, 22, 23, 24, 10, 9, 25, 11, 8]
-
+        
+        # Control for intialization. Can be "NC" or "NO" which means the signal is connected to the Normally Connected 
+        #  or Normally Open connection respectively on the relays. Setting this to the correct value will ensure when the
+        #  controller starts all the speakers are disconnected
+        SPEAKER_OUPUT_RELAY_CONNECTION = "NC"; # "NC" or "NO" see __init__(self) function
+        
         def __init__(self):
                 print("INIT OBJ")
                 # initialize GPIO mapping for relays
                 GPIO.setmode(GPIO.BCM) #broadcom pin numbering
                 for relay in self.RELAY_PIN_MAP:
                         GPIO.setup(relay, GPIO.OUT)
-                        GPIO.output(relay, GPIO.HIGH)
-                        #default set to HIGH as relay board is active low
-
+                        if SPEAKER_OUPUT_RELAY_CONNECTION == "NO":
+                                GPIO.output(relay, GPIO.HIGH)
+                        else:
+                                GPIO.output(relay, GPIO.LOW)
 
         #
         # This function takes zone and value and sets the corresponding pair
